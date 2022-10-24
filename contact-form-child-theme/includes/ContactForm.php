@@ -3,8 +3,10 @@
 class Custom_ET_Builder_Module_Contact_Form extends ET_Builder_Module_Type_WithSpamProtection
  {
 
+	
 	function init() {
 		parent::init();
+
 
 		$this->name            = esc_html__( 'Contact Form', 'et_builder' );
 		$this->plural          = esc_html__( 'Contact Forms', 'et_builder' );
@@ -290,6 +292,20 @@ class Custom_ET_Builder_Module_Contact_Form extends ET_Builder_Module_Type_WithS
 					),
 					'toggle_slug'     => 'email',
 				),
+				
+				'from_email'          => array(
+					'label'           => esc_html__( 'From Email', 'et_builder' ),
+					'type'            => 'text',
+					'option_category' => 'basic_option',
+					'description'     => et_get_safe_localization(
+						sprintf(
+							__( 'Input the "from" email address.<br /><br /> Note: email delivery and spam prevention are complex processes. We recommend using a delivery service such as <a href="%1$s">Mandrill</a>, <a href="%2$s">SendGrid</a>, or other similar service to ensure the deliverability of messages that are submitted through this form', 'et_builder' ),
+							'http://mandrill.com/',
+							'https://sendgrid.com/'
+						)
+					),
+					'toggle_slug'     => 'email',
+				),
 				'title'              => array(
 					'label'           => et_builder_i18n( 'Title' ),
 					'type'            => 'text',
@@ -401,6 +417,7 @@ class Custom_ET_Builder_Module_Contact_Form extends ET_Builder_Module_Type_WithS
 
 		$captcha               = $this->props['captcha'];
 		$email                 = $this->props['email'];
+		$from_email			   = $this->props['from_email'];
 		$title                 = $multi_view->render_element(
 			array(
 				'tag'     => et_pb_process_header_level( $this->props['title_level'], 'h1' ),
@@ -594,6 +611,7 @@ class Custom_ET_Builder_Module_Contact_Form extends ET_Builder_Module_Type_WithS
 
 			$contact_name = isset( $processed_fields_values['name'] ) ? stripslashes( sanitize_text_field( $processed_fields_values['name']['value'] ) ) : '';
 
+
 			if ( '' !== $custom_message ) {
 				// decode html entites to make sure HTML from the message pattern is rendered properly
 				$message_pattern = et_builder_convert_line_breaks( html_entity_decode( $custom_message ), "\r\n" );
@@ -631,7 +649,7 @@ class Custom_ET_Builder_Module_Contact_Form extends ET_Builder_Module_Type_WithS
 
 			$http_host = str_replace( 'www.', '', $_SERVER['HTTP_HOST'] );
 
-			$headers[] = "From: \"{$contact_name}\" <noreply@{$http_host}>";
+			$headers[] = "From: \"{$contact_name}\" <{$from_email}>";
 
 			// Set `Reply-To` email header based on contact_name and contact_email values
 			if ( ! empty( $contact_email ) ) {
