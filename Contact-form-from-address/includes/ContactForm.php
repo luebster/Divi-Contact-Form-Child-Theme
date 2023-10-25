@@ -417,7 +417,7 @@ class Custom_ET_Builder_Module_Contact_Form extends ET_Builder_Module_Type_WithS
 
 		$captcha               = $this->props['captcha'];
 		$email                 = $this->props['email'];
-		$from_email            = $this->props['from_email'] ?? 'noreply@{$http_host}';
+		$from_email            = $this->props['from_email'] ?: 'noreply@{$http_host}';
 		$title                 = $multi_view->render_element(
 			array(
 				'tag'     => et_pb_process_header_level( $this->props['title_level'], 'h1' ),

@@ -1,0 +1,12 @@
+{
+	"version": "1.0.0",
+	"name": "dependencies",
+	"private": true,
+	"browserslist": [
+		"defaults"
+	],
+	"devDependencies": {
+		"grunt": "1.6.1",
+		"grunt-zip": "0.20.0"
+	}
+}
