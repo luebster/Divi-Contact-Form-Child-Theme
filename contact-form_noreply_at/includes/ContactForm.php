@@ -1,6 +1,6 @@
 <?php
 
-class ET_Builder_Module_Contact_Form extends ET_Builder_Module_Type_WithSpamProtection
+class Custom_ET_Builder_Module_Contact_Form extends ET_Builder_Module_Type_WithSpamProtection
 {
 
     function init()
@@ -10,7 +10,7 @@ class ET_Builder_Module_Contact_Form extends ET_Builder_Module_Type_WithSpamProt
         $this->name = esc_html__('Contact Form', 'et_builder');
         $this->plural = esc_html__('Contact Forms', 'et_builder');
         $this->slug = 'et_pb_contact_form';
-        $this->vb_support = 'on';
+        $this->vb_support = 'off';
         $this->child_slug = 'et_pb_contact_field';
         $this->child_item_text = esc_html__('Field', 'et_builder');
         $this->_use_unique_id = true;
@@ -597,7 +597,7 @@ class ET_Builder_Module_Contact_Form extends ET_Builder_Module_Type_WithSpamProt
                 ? $email
                 : get_site_option('admin_email');
 
-            $et_site_name = get_option('blogname');
+            $et_site_name = strval(get_option('blogname'));
 
             $contact_name = isset($processed_fields_values['name']) ? stripslashes(sanitize_text_field($processed_fields_values['name']['value'])) : '';
 
@@ -638,7 +638,7 @@ class ET_Builder_Module_Contact_Form extends ET_Builder_Module_Type_WithSpamProt
 
             $http_host = str_replace('www.', '', $_SERVER['HTTP_HOST']);
 
-            $headers[] = "From: \"{$contact_name}\" <mail@{$http_host}>";
+            $headers[] = "From: \"{$contact_name}\" <noreply@{$http_host}>";
 
             // Set `Reply-To` email header based on contact_name and contact_email values
             if (!empty($contact_email)) {
@@ -773,6 +773,8 @@ class ET_Builder_Module_Contact_Form extends ET_Builder_Module_Type_WithSpamProt
 			<div id="%4$s" class="%5$s" data-form_unique_num="%6$s" data-form_unique_id="%10$s"%7$s>
 				%9$s
 				%8$s
+				%11$s
+				%12$s
 				%1$s
 				<div class="et-pb-contact-message">%2$s</div>
 				%3$s
@@ -788,7 +790,11 @@ class ET_Builder_Module_Contact_Form extends ET_Builder_Module_Type_WithSpamProt
             'on' === $use_redirect && '' !== $redirect_url ? sprintf(' data-redirect_url="%1$s"', esc_attr($redirect_url)) : '',
             $video_background,
             $parallax_image_background,
-            esc_attr($unique_id) // #10
+            esc_attr($unique_id),
+            // #10
+            et_core_esc_previously($this->background_pattern()),
+            // #11
+            et_core_esc_previously($this->background_mask()) // #12
         );
 
         return $output;
@@ -839,5 +845,5 @@ class ET_Builder_Module_Contact_Form extends ET_Builder_Module_Type_WithSpamProt
 }
 
 if (et_builder_should_load_all_module_data()) {
-    new ET_Builder_Module_Contact_Form();
+
 }

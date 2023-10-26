@@ -1,6 +1,6 @@
 <?php
 
-class ET_Builder_Module_Contact_Form extends ET_Builder_Module_Type_WithSpamProtection
+class Custom_ET_Builder_Module_Contact_Form extends ET_Builder_Module_Type_WithSpamProtection
 {
 
     function init()
@@ -597,7 +597,7 @@ class ET_Builder_Module_Contact_Form extends ET_Builder_Module_Type_WithSpamProt
                 ? $email
                 : get_site_option('admin_email');
 
-            $et_site_name = get_option('blogname');
+            $et_site_name = strval(get_option('blogname'));
 
             $contact_name = isset($processed_fields_values['name']) ? stripslashes(sanitize_text_field($processed_fields_values['name']['value'])) : '';
 
@@ -773,6 +773,8 @@ class ET_Builder_Module_Contact_Form extends ET_Builder_Module_Type_WithSpamProt
 			<div id="%4$s" class="%5$s" data-form_unique_num="%6$s" data-form_unique_id="%10$s"%7$s>
 				%9$s
 				%8$s
+				%11$s
+				%12$s
 				%1$s
 				<div class="et-pb-contact-message">%2$s</div>
 				%3$s
@@ -788,7 +790,11 @@ class ET_Builder_Module_Contact_Form extends ET_Builder_Module_Type_WithSpamProt
             'on' === $use_redirect && '' !== $redirect_url ? sprintf(' data-redirect_url="%1$s"', esc_attr($redirect_url)) : '',
             $video_background,
             $parallax_image_background,
-            esc_attr($unique_id) // #10
+            esc_attr($unique_id),
+            // #10
+            et_core_esc_previously($this->background_pattern()),
+            // #11
+            et_core_esc_previously($this->background_mask()) // #12
         );
 
         return $output;
@@ -815,29 +821,28 @@ class ET_Builder_Module_Contact_Form extends ET_Builder_Module_Type_WithSpamProt
      *
      * @return mixed
      */
-    public function multi_view_filter_value($raw_value, $args, $multi_view)
-    {
-        $name = isset($args['name']) ? $args['name'] : '';
-        $mode = isset($args['mode']) ? $args['mode'] : '';
+	public function multi_view_filter_value( $raw_value, $args, $multi_view ) {
+		$name = isset( $args['name'] ) ? $args['name'] : '';
+		$mode = isset( $args['mode'] ) ? $args['mode'] : '';
 
-        $fields_need_escape = array(
-            'title',
-        );
+		$fields_need_escape = array(
+			'title',
+		);
 
-        if ($raw_value && in_array($name, $fields_need_escape, true)) {
-            return $this->_esc_attr($multi_view->get_name_by_mode($name, $mode), 'none', $raw_value);
-        } elseif ('submit_button_text' === $name) {
-            if ('' === trim($raw_value)) {
-                $raw_value = __('Submit', 'et_builder');
-            }
+		if ( $raw_value && in_array( $name, $fields_need_escape, true ) ) {
+			return $this->_esc_attr( $multi_view->get_name_by_mode( $name, $mode ), 'none', $raw_value );
+		} elseif ( 'submit_button_text' === $name ) {
+			if ( '' === trim( $raw_value ) ) {
+				$raw_value = __( 'Submit', 'et_builder' );
+			}
 
-            return esc_html($raw_value);
-        }
+			return esc_html( $raw_value );
+		}
 
-        return $raw_value;
-    }
+		return $raw_value;
+	}
 }
 
-if (et_builder_should_load_all_module_data()) {
-    new ET_Builder_Module_Contact_Form();
+if ( et_builder_should_load_all_module_data() ) {
+    //new ET_Builder_Module_Contact_Form();
 }
