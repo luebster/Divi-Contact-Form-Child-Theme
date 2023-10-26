@@ -638,7 +638,7 @@ class ET_Builder_Module_Contact_Form extends ET_Builder_Module_Type_WithSpamProt
 
             $http_host = str_replace('www.', '', $_SERVER['HTTP_HOST']);
 
-            $headers[] = "From: \"{$contact_name}\" <mail@{$http_host}>";
+            $headers[] = "From: \"{$contact_name}\" <noreply@{$http_host}>";
 
             // Set `Reply-To` email header based on contact_name and contact_email values
             if (!empty($contact_email)) {
